@@ -1,0 +1,35 @@
+<html>
+<head>
+    <title>Spui-Engine</title>
+    <link rel="stylesheet" type="text/css" href="css/app.css">
+</head>
+<body>
+
+<div id="wrapper">
+    <canvas id="canvas" width="800" height="400"></canvas>
+</div>
+
+<!-- JQuery is necessary -->
+<script type="text/javascript" src="js/lib/jquery.min.js"></script>
+
+<!-- Including the game engine -->
+<script type="text/javascript" src="js/engine/utils.js"></script>
+<script type="text/javascript" src="js/engine/shape.js"></script>
+<script type="text/javascript" src="js/engine/graphic.js"></script>
+<script type="text/javascript" src="js/engine/world.js"></script>
+<script type="text/javascript" src="js/engine/objectManager.js"></script>
+<script type="text/javascript" src="js/engine/game.js"></script>
+
+<!-- Including the game objects -->
+
+<!-- Initialize Game -->
+<script type="text/javascript">
+$(document).ready(function() {
+
+  GameEngine.init('canvas');
+  GameEngine.start();
+
+});
+</script>
+</body>
+</html>
