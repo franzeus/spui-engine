@@ -49,6 +49,8 @@ var Graphic = function(_options) {
     this.debug = GameEngine.debug;
     this.isObservable = true;
 
+    this.stateManager = null;
+
     // Overwrite default attributes
     jQuery.extend(this, _options);
 
@@ -109,11 +111,24 @@ Graphic.prototype = {
 
         if (this.img) {
 
-            if (this.playSprite) {
-                this.playFrames();
-            }
+            var currentFrame = 0;
             
-            this.ctx.drawImage(this.img, this.width * this.currentFrame, 0, this.width, this.height, this.x, this.y, this.width, this.height);
+            if (this.playSprite) {
+            
+                this.playFrames();
+                currentFrame = this.currentFrame;
+            
+            // Only show certain frame
+            } else {
+
+                if (this.stateManager) {
+                    currentFrame = this.stateManager.currentState.sprite.frame;
+                } else {
+                    currentFrame = this.currentFrame;
+                }
+            }
+
+            this.ctx.drawImage(this.img, this.width * currentFrame, 0, this.width, this.height, this.x, this.y, this.width, this.height);
         
         } else {
             throw "Object has no image";
@@ -157,6 +172,14 @@ Graphic.prototype = {
         }
     },
 
+    // ---------------------------------    
+
+    // Set the current state
+    setState : function(stateName) {
+        if (this.stateManager) {
+            this.stateManager.change(stateName);
+        }
+    },
 
     // ---------------------------------
 
