@@ -42,6 +42,7 @@ var GameEngine = {
 
         this.transX = (World.centerX - (World.centerX * this.scale));
         this.transY = (World.centerY - (World.centerY * this.scale));
+        this.followOffsetX = 0;
 
         this.maxFollowY = 0;
 
@@ -62,6 +63,11 @@ var GameEngine = {
 
     lose : function() {
         this.canvasToBW();
+        this.onLose();
+    },
+
+    onLose : function() {
+        return;
     },
 
     draw : function() {
@@ -91,9 +97,12 @@ var GameEngine = {
         requestAnimationFrame(GameEngine.draw);
     },
 
-    followObject : function(object) {
+    followObject : function(object, axis) {
 
-        this.objectToFollow = object;
+        this.objectToFollow = { 
+            object: object,
+            axis : axis
+        };
 
         if (!object) {
             this.transX = (World.centerX - (World.centerX * this.scale));
@@ -103,15 +112,21 @@ var GameEngine = {
 
     translateToFollowObject : function() {
 
-        if (this.objectToFollow) {
+        if (this.objectToFollow.object) {
 
-            var object = this.objectToFollow;
+            var object = this.objectToFollow.object,
+                axis = this.objectToFollow.axis;
 
-            this.transX = (object.x + object.width / 2) * -this.scale + object.initX;
-            this.transY = ((object.y + object.height / 2) * -this.scale) + World.centerY;
+            if (axis === 'x' || !axis) {
+                this.transX = (object.x + this.followOffsetX + object.width / 2) * -this.scale + object.initX;
+            }
 
-            if (this.transY <= this.maxFollowY * this.scale)
-                this.transY = this.maxFollowY * this.scale;
+            if (axis === 'y' || !axis) {
+                this.transY = ((object.y + object.height / 2) * -this.scale) + World.centerY;
+
+                if (this.transY <= this.maxFollowY * this.scale)
+                    this.transY = this.maxFollowY * this.scale;
+            }
             
         } else {
             console.warn('There is no object to follow!');

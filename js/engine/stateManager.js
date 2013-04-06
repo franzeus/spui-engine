@@ -1,11 +1,13 @@
 /*
     E.g:
     {
-        name : 'decline',
-        onStart : true,
-        updateFn : 'updateDecline',
+        name : 'decline',   // unique state name
+        onStart : true,     // object will have this state on start (unique)
+        beforeFn : 'initDecline', // method to execute before state changes
+        updateFn : 'updateDecline', // update method for this state
         sprite : {
-            frame : 0
+            frame : 0   // show this frame on this state
+            frames : [1, 10] // play frames 1 - 10 on this state
         }
     },
 
@@ -30,6 +32,7 @@ StateManager.prototype.change = function(_stateName) {
     }
 };
 
+// Finds a state by property, value and returns { state }
 StateManager.prototype.findByProperty = function(property, value) {
     
     var state = this.traverseStates(function(state) {
@@ -39,9 +42,8 @@ StateManager.prototype.findByProperty = function(property, value) {
             if (state[property] === value) {
                 return state;
             }
-
         }
-
+        
     });
 
     return state;

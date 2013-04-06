@@ -5,6 +5,11 @@ function drawRectangle(ctx, x, y, width, height, color, lineWidth) {
     ctx.strokeRect(x, y, width, height);
 }
 
+function drawFilledRectangle(ctx, x, y, width, height, color) {
+	ctx.fillStyle = color;
+    ctx.fillRect(x, y, width, height);
+}
+
 function drawFilledCircle(ctx, x, y, radius, color) {
 	ctx.lineWidth = 0;
 	ctx.fillStyle = color;

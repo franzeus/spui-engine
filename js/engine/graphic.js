@@ -24,7 +24,8 @@ var Graphic = function(_options) {
     this.balancePointY = null;
 
     this.angle = 0;
-    this.speed = GameEngine.ENV.speed;
+    this.speedMultiplikator = 6;
+    this.speed = GameEngine.ENV.speed * this.speedMultiplikator;
     this.gravity = GameEngine.ENV.gravity;
     this.maxAcceleration = 2;
     this.acceleration = 0.04;
@@ -37,8 +38,6 @@ var Graphic = function(_options) {
     this.startFrame = 0;
     this.endFrame = this.frames;
 
-    this.drawFunction = this.drawShape;
-
     this.boundingBox = {
         offsetX : 0,
         offsetY : 0,
@@ -49,10 +48,44 @@ var Graphic = function(_options) {
     this.debug = GameEngine.debug;
     this.isObservable = true;
 
+    this.lifeBar = {
+        show : false,
+        totalLifes : 1,
+        lifes : 1,
+        offsetX : this.x,
+        offsetY : this.y - 10,
+        width : this.width,
+        height : 4,
+        
+        draw : function(ctx, x, y) {
+
+            var posX = x + this.offsetX,
+                posY = y + this.offsetY;
+
+            // RedBar
+            drawFilledRectangle(ctx, posX, posY, this.width, this.height, '#FF0000');
+            
+            // GreenBar
+            var oneLifeInPixel = this.width / this.totalLifes,
+                greenWidth = oneLifeInPixel * this.lifes;
+
+            drawFilledRectangle(ctx, posX, posY, greenWidth, this.height, '#00FF00');
+        }
+    };
+
     this.stateManager = null;
 
     // Overwrite default attributes
     jQuery.extend(this, _options);
+
+    if (_options && _options.hasOwnProperty('img')) {
+        console.log(_options);
+        this.img = new Image();
+        this.img.src = _options.img.src;
+        this.drawFunction = this.drawImage;
+    } else {
+        this.drawFunction = this.drawShape;
+    }
 
     this.initX = this.x;
     this.initY = this.y;
@@ -70,7 +103,7 @@ Graphic.prototype = {
         var x = this.x + this.boundingBox.offsetX,
             y = this.y + this.boundingBox.offsetY;
 
-        drawRectangle(ctx, x, y, this.boundingBox.width, this.boundingBox.height, this.boundingBox.color, 1);
+        drawRectangle(ctx, x, y, this.boundingBox.width, this.boundingBox.height, this.boundingBox.color);
     },
 
     // Draw the graphic as a rectangle
@@ -122,7 +155,13 @@ Graphic.prototype = {
             } else {
 
                 if (this.stateManager) {
-                    currentFrame = this.stateManager.currentState.sprite.frame;
+
+                    if (this.stateManager.currentState.hasOwnProperty('sprite')) {
+                        currentFrame = this.stateManager.currentState.sprite.frame;    
+                    } else {
+                        currentFrame = this.currentFrame
+                    }
+
                 } else {
                     currentFrame = this.currentFrame;
                 }
@@ -162,10 +201,16 @@ Graphic.prototype = {
                 if (this.isSelected) {
                    this.drawSelectBox(ctx);
                 }
-            
-                if(debug || this.debug) {
+                
+                // Draw Debug stuff
+                if (debug || this.debug) {
                     this.drawBoundingBox(ctx);
                     this.drawDirectionLine(ctx, centerX, centerY);
+                }
+
+                // Draw lifeBar
+                if (this.lifeBar.show) {
+                    this.lifeBar.draw(ctx, this.x, this.y);
                 }
 
             ctx.restore();
@@ -177,11 +222,54 @@ Graphic.prototype = {
     // Set the current state
     setState : function(stateName) {
         if (this.stateManager) {
+
             this.stateManager.change(stateName);
+
+            // Bind updateFn
+            this.updateFn = this.stateManager.currentState['updateFn'];
+
+            // Execute state's before method if exists
+            if (this.stateManager.currentState.hasOwnProperty('beforeFn')) {
+                this.beforeFn = this.stateManager.currentState.beforeFn;
+                this[this.beforeFn]();
+            }
         }
     },
 
     // ---------------------------------
+
+    attachTo : function(object, offset) {
+
+        this.attachedTo = {
+            obj : object,
+            offset : offset
+        };
+
+        this.updateFn = this.updateAttached;
+
+    },
+
+    detach : function() {
+        console.log('detach');
+        this.attachedTo = null;
+    },
+
+    updateAttached : function() {
+
+        if (this.attachedTo) {
+
+            var attachedObject = this.attachedTo.obj,
+                offset = this.attachedTo.offset;
+
+            this.x = attachedObject.x + offset.x;
+            this.y = attachedObject.y + offset.y;
+            this.angle = attachedObject.angle;
+
+        }
+
+    },
+
+    // ---------------------------------    
 
     inverseDirection : function() {
         this.setVector(-this.vx, -this.vy);
