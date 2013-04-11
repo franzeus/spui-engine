@@ -79,10 +79,17 @@ var Graphic = function(_options) {
     jQuery.extend(this, _options);
 
     if (_options && _options.hasOwnProperty('img')) {
-        console.log(_options);
+        
         this.img = new Image();
         this.img.src = _options.img.src;
         this.drawFunction = this.drawImage;
+        
+        this.isLoaded = false;
+
+        this.img.onLoad = function() {
+            this.isLoaded = true;
+        }
+
     } else {
         this.drawFunction = this.drawShape;
     }
