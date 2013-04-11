@@ -12,8 +12,8 @@ var GameEngine = {
     canvas : null,
     ctx : null,
 
-    transX : 0,
-    transY : 0,
+    cameraX : 0,
+    cameraY : 0,
     scale : 1,
 
     ENV : {
@@ -40,8 +40,8 @@ var GameEngine = {
         this.objectManager.init(this);
         this.objectManager.debug = this.debug;
 
-        this.transX = (World.centerX - (World.centerX * this.scale));
-        this.transY = (World.centerY - (World.centerY * this.scale));
+        this.cameraX = (World.centerX - (World.centerX * this.scale));
+        this.cameraY = (World.centerY - (World.centerY * this.scale));
         this.followOffsetX = 0;
 
         this.maxFollowY = 0;
@@ -78,7 +78,7 @@ var GameEngine = {
 
         ctx.save();
         
-        ctx.translate(GameEngine.transX, GameEngine.transY);
+        ctx.translate(GameEngine.cameraX, GameEngine.cameraY);
 
         ctx.scale(GameEngine.scale, GameEngine.scale);
 
@@ -105,8 +105,8 @@ var GameEngine = {
         };
 
         if (!object) {
-            this.transX = (World.centerX - (World.centerX * this.scale));
-            this.transY = (World.centerY - (World.centerY * this.scale));
+            this.cameraX = (World.centerX - (World.centerX * this.scale));
+            this.cameraY = (World.centerY - (World.centerY * this.scale));
         }
     },
 
@@ -118,14 +118,14 @@ var GameEngine = {
                 axis = this.objectToFollow.axis;
 
             if (axis === 'x' || !axis) {
-                this.transX = (object.x + this.followOffsetX + object.width / 2) * -this.scale + object.initX;
+                this.cameraX = (object.x + this.followOffsetX + object.width / 2) * -this.scale + object.initX;
             }
 
             if (axis === 'y' || !axis) {
-                this.transY = ((object.y + object.height / 2) * -this.scale) + World.centerY;
+                this.cameraY = ((object.y + object.height / 2) * -this.scale) + World.centerY;
 
-                if (this.transY <= this.maxFollowY * this.scale)
-                    this.transY = this.maxFollowY * this.scale;
+                if (this.cameraY <= this.maxFollowY * this.scale)
+                    this.cameraY = this.maxFollowY * this.scale;
             }
             
         } else {
