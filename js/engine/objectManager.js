@@ -20,19 +20,19 @@ var ObjectManager = {
     },
 
     draw : function () {
-        
+
         this.traverseObjects(function(object) {
-        
-            object.draw.call(object, this.debug);
 
             this.updateObject.call(this, object);
-        
+            object.draw.call(object, this.debug);
+
         });
 
     },
 
     updateObject : function (object) {
-        
+
+        object.setLastPosition();
         object.update.call(object);
 
         // Dont check collision if it can not collide anyways

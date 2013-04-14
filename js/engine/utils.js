@@ -181,3 +181,13 @@ function radionToDegree(angle) {
 function sinMove(x, y, radius) {
     return y + Math.sin(0.02 * x) * radius;
 }
+
+// Map of keys and char code
+var KEY = {
+    ARROW_UP : 38,
+    ARROW_DOWN : 40,
+    ARROW_RIGHT : 39,
+    ARROW_LEFT : 37,
+    SPACEBAR : 32,
+    S : 83
+};
