@@ -122,6 +122,7 @@ Graphic.prototype = {
         ctx.fillRect(this.x, this.y, this.width, this.height);
     },
 
+    // For visual-debugging: draw the vector
     drawDirectionLine : function(ctx, centerX, centerY) {
         
         // Y-Axis
@@ -132,19 +133,21 @@ Graphic.prototype = {
 
         // Draw arrow
         ctx.save();
-        ctx.translate( centerX + 20, centerY );
+        ctx.translate( this.x + this.width, centerY );
         ctx.scale(0.4, 0.4);
 
         ctx.beginPath();
-        
+
         ctx.moveTo( -20, 0 );
         ctx.lineTo( -25, -12 );
         ctx.lineTo( 1, 0 );
         ctx.lineTo( -25, 12 );
         ctx.closePath();
 
+        ctx.fillStyle = '#111';
         ctx.fill();
-        ctx.restore();
+
+        ctx.restore();        
     },
 
     // Draw when graphic is selected
@@ -231,7 +234,7 @@ Graphic.prototype = {
                 ctx.translate(-centerX, -centerY);
 
                 if (this.doClearLastPosition) {
-                    this.clearLastPosition();
+                    //this.clearLastPosition();
                 }
 
                 // Draw object
@@ -265,17 +268,16 @@ Graphic.prototype = {
 
         if (this.lastX !== this.x || this.lastY !== this.y) {
 
-            var offsetX = -30,
-                offsetY = -30,
-                lastX = this.lastX + (this.vx * -1 - 2),
+            // added offsets to clear tidbits
+            var lastX = this.lastX + (this.vx * -1 - 2),
                 lastY = this.lastY + (this.vy * -1 - 2),
                 w = this.width + 2,
                 h = this.height + 4;
 
             // Consider lifeBar if shown
             if (this.lifeBar.show) {
-                lastY = this.lastY + this.lifeBar.offsetY - 1;
-                w = Math.max(this.width, this.lifeBar.width) + 4;
+                lastY = this.lastY + this.lifeBar.offsetY - 2;
+                w = Math.max(this.width, this.lifeBar.width) + 6;
                 h = Math.abs(this.lifeBar.offsetY) + this.height + 4;
             }
 
