@@ -14,7 +14,7 @@ var ParallaxPlain = function(options) {
     this.img.src = this.src;
 
 	this.parallaxCanvas = document.getElementById("parallaxCanvas");
-	this.ctx = parallaxCanvas.getContext("2d");		
+	this.ctx = this.parallaxCanvas.getContext("2d");
 	this.backgroundPattern = this.ctx.createPattern(this.img,"repeat-x");
 
     this.entryX = World.width + (this.width - World.width);
@@ -23,8 +23,9 @@ var ParallaxPlain = function(options) {
 	this.sy = 0;
 	this.swidth = this.width;
 	this.sheight = this.height;
+	console.log(this.width);
 
-	this.drawFunction = this.drawAsPattern;
+	this.drawFunction = this.drawImage;
 };
 
 ParallaxPlain.prototype = new Graphic();
@@ -44,7 +45,7 @@ ParallaxPlain.prototype.drawAsPattern = function() {
 };
 
 ParallaxPlain.prototype.drawAsClippedImage = function() {
-	this.ctx.drawImage(this.img, this.sx, this.sy, this.swidth, this.sheight, this.x, this.y, this.width, this.height);
+	this.ctx.drawImage(this.img, Math.round(this.sx), this.sy, this.swidth, this.sheight, this.x, this.y, Math.round(this.width), this.height);
 };
 
 //
@@ -52,17 +53,38 @@ ParallaxPlain.prototype.update = function(i) {
 
 	if (this.drawFunction === this.drawAsClippedImage) {
 
-		this.sx -= 1; // The x coordinate where to start clipping
-		this.sy = 0;
-		this.swidth = this.width; // The width of the clipped image
-		//console.log(this.swidth);
+		if (this.width <= 0) {
+			//this.x = this.entryX;
+		}
+
+		// The x coordinate where to start clipping
+		this.sx += 1; //this.vx * (GameEngine.ENV.speed * this.speed);; 
+		this.sy = 0;		
+
+		// The x coordinate where to place the image on the canvas
+		this.x = 0;
+		this.y = 0;
+
+		// The width of the clipped image		
+		this.swidth = this.width; 
 		this.sheight = this.height;
 
-		this.x = 0; // The x coordinate where to place the image on the canvas
-		this.y = 0;
-		this.width = this.swidth; // The width of the image to use (stretch or reduce the image)
+		// The width of the image to use (stretch or reduce the image)
+		if (this.sx >= 640) {
+			this.width -= this.sx;
+		} else {
+			this.width = 940;
+		}
 		this.height = this.height;
-		
+
+	} else if (this.drawFunction === this.drawImage) {
+
+		if (this.leftWorldOnLeft()) {
+			this.x = this.entryX;
+		}
+
+		this.x -= this.vx * (GameEngine.ENV.speed * this.speed);
+
 	} else {
 		this.x -= this.vx * (GameEngine.ENV.speed * this.speed);
 	}

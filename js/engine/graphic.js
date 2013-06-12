@@ -17,6 +17,9 @@ var Graphic = function(_options) {
 
     this.x = 0;
     this.y = 0;
+    this.lastX = 0;
+    this.lastY = 0;
+    this.doClearLastPosition = true;
     this.vx = 0;
     this.vy = 0;
     this.rotateToDirection = false;
@@ -52,10 +55,10 @@ var Graphic = function(_options) {
         show : false,
         totalLifes : 1,
         lifes : 1,
-        offsetX : this.x,
-        offsetY : this.y - 10,
+        offsetX : 0,
+        offsetY : -10,
         width : this.width,
-        height : 4,
+        height : 5,
         
         draw : function(ctx, x, y) {
 
@@ -119,9 +122,32 @@ Graphic.prototype = {
         ctx.fillRect(this.x, this.y, this.width, this.height);
     },
 
+    // For visual-debugging: draw the vector
     drawDirectionLine : function(ctx, centerX, centerY) {
-        ctx.fillStyle = this.directionLineColor;
-        ctx.fillRect(centerX, centerY, this.width / 2, 1);
+        
+        // Y-Axis
+        //drawLine(ctx, centerX, centerY, centerX, centerY - this.height / 2, '#FFBB00', 1);
+
+        // X-Axis
+        drawLine(ctx, centerX, centerY, centerX + this.width / 2, centerY, this.directionLineColor, 1);
+
+        // Draw arrow
+        ctx.save();
+        ctx.translate( this.x + this.width, centerY );
+        ctx.scale(0.4, 0.4);
+
+        ctx.beginPath();
+
+        ctx.moveTo( -20, 0 );
+        ctx.lineTo( -25, -12 );
+        ctx.lineTo( 1, 0 );
+        ctx.lineTo( -25, 12 );
+        ctx.closePath();
+
+        ctx.fillStyle = '#111';
+        ctx.fill();
+
+        ctx.restore();        
     },
 
     // Draw when graphic is selected
@@ -188,10 +214,15 @@ Graphic.prototype = {
             if (this.rotateToDirection) {
                 this.setRotateToDirectionAngle();
             }
+            
+            if (this.doClearLastPosition) {
+                this.clearLastPosition();
+            }
 
             var ctx = this.ctx,
-            centerX = this.balancePointX || this.x + (this.width / 2),
-            centerY = this.balancePointY || this.y + (this.height / 2);
+                centerX = this.balancePointX || this.x + (this.width / 2),
+                centerY = this.balancePointY || this.y + (this.height / 2);            
+
 
             ctx.save();
 
@@ -202,6 +233,11 @@ Graphic.prototype = {
                 // Translate back
                 ctx.translate(-centerX, -centerY);
 
+                if (this.doClearLastPosition) {
+                    //this.clearLastPosition();
+                }
+
+                // Draw object
                 this.drawFunction(ctx);
 
                 // Draw select stroke
@@ -221,10 +257,45 @@ Graphic.prototype = {
                 }
 
             ctx.restore();
+
+
         }
     },
 
-    // ---------------------------------    
+    // ---------------------------------
+
+    clearLastPosition : function() {
+
+        if (this.lastX !== this.x || this.lastY !== this.y) {
+
+            // added offsets to clear tidbits
+            var lastX = this.lastX + (this.vx * -1 - 2),
+                lastY = this.lastY + (this.vy * -1 - 2),
+                w = this.width + 2,
+                h = this.height + 4;
+
+            // Consider lifeBar if shown
+            if (this.lifeBar.show) {
+                lastY = this.lastY + this.lifeBar.offsetY - 2;
+                w = Math.max(this.width, this.lifeBar.width) + 6;
+                h = Math.abs(this.lifeBar.offsetY) + this.height + 4;
+            }
+
+            this.ctx.clearRect(lastX, lastY, w, h);
+            
+            /*this.ctx.strokeStyle = this.selectColor;
+            this.ctx.lineWidth = 3;
+            this.ctx.strokeRect(lastX, lastY, w, h);*/
+        }
+
+    },
+
+    setLastPosition : function() {
+        this.lastX = this.x;
+        this.lastY = this.y;
+    },
+
+    // ---------------------------------
 
     // Set the current state
     setState : function(stateName) {

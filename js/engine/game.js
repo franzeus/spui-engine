@@ -16,6 +16,8 @@ var GameEngine = {
     cameraY : 0,
     scale : 1,
 
+    doClear : false,
+
     ENV : {
         speed : 0.2,
         maxSpeed: 2,
@@ -74,7 +76,9 @@ var GameEngine = {
 
         var ctx = GameEngine.ctx;
 
-        ctx.clearRect(0, 0, World.width, World.height);
+        if (GameEngine.doClear) {
+            ctx.clearRect(0, 0, World.width, World.height);
+        }
 
         ctx.save();
         
