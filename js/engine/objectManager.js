@@ -6,6 +6,7 @@
 var ObjectManager = {
 
     objects : [],
+    allObjectsLoaded : false,
     selectedObject : null,
     objectCounter : 0,
     observeInterval : null,
@@ -17,6 +18,21 @@ var ObjectManager = {
 
         this.canvasOffset = jQuery(this.gameEngine.canvas.id).offset();
         jQuery(this.gameEngine.canvas).on('click', jQuery.proxy(this.handleClickOnObject, this));
+    },
+
+    // After all init add objects occured
+    preload : function(callback) {
+
+        while (this.allObjectsLoaded) {
+
+            if (object.isLoaded) {
+                elementsloaded++;
+            }
+
+        }
+
+        return true;
+
     },
 
     draw : function () {
