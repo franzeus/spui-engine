@@ -3,7 +3,6 @@
     GameEngine Object
 
     Todo:
-        * StateManager for graphics
         * Strategy pattern also for graphic.update method
         * Collision detection
 */
@@ -16,10 +15,12 @@ var GameEngine = {
     cameraY : 0,
     scale : 1,
 
+    requestAnimationId : null,
+
     doClear : false,
 
     ENV : {
-        speed : 0.2,
+        speed : 2,
         maxSpeed: 2,
         gravity : 0
     },
@@ -28,6 +29,8 @@ var GameEngine = {
 
     objectManager : null,
     debug : true,
+
+    isRunning : false,
 
     init : function(canvasId, isDebug) {
 
@@ -52,15 +55,16 @@ var GameEngine = {
     },
 
     start : function() {
+        this.isRunning = true;
         this.draw();
     },
 
-    stop : function() {  
-        cancelAnimationFrame();
+    stop : function() {
+        this.isRunning = false;
     },
 
     reset : function() {
-        //
+        this.isRunning = false;
     },
 
     lose : function() {
@@ -73,6 +77,8 @@ var GameEngine = {
     },
 
     draw : function() {
+
+        if (!GameEngine.isRunning) return;
 
         var ctx = GameEngine.ctx;
 
@@ -98,7 +104,7 @@ var GameEngine = {
 
         ctx.restore();
         
-        requestAnimationFrame(GameEngine.draw);
+        GameEngine.requestAnimationId = requestAnimationFrame(GameEngine.draw);
     },
 
     followObject : function(object, axis) {

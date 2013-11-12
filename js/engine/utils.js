@@ -106,6 +106,10 @@ function getRandomInt (min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
+function getRandomArrayItem (arr) {
+    return arr[getRandomInt(0, arr.length - 1)];
+}
+
 function isWithinArea (x, y, obj) {
 
     if( x >= obj.x &&

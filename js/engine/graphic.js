@@ -10,7 +10,11 @@ var Graphic = function(_options) {
     this.directionLineColor = "#FF0000";
     this.color = getRandomColor();
     this.isVisible = true;
+    this.doUpdate = true;
     this.selectColor = '#D98E1A';
+
+    this.scaleX = 1;
+    this.scaleY = 1;
 
     this.width = 10;
     this.height = 10;
@@ -19,7 +23,7 @@ var Graphic = function(_options) {
     this.y = 0;
     this.lastX = 0;
     this.lastY = 0;
-    this.doClearLastPosition = true;
+    this.doClearLastPosition = false;
     this.vx = 0;
     this.vy = 0;
     this.rotateToDirection = false;
@@ -40,6 +44,8 @@ var Graphic = function(_options) {
     this.playSprite = false;
     this.startFrame = 0;
     this.endFrame = this.frames;
+    this.playFrameLock = null;
+    this.frameInterval = 60;
 
     this.boundingBox = {
         offsetX : 0,
@@ -159,18 +165,25 @@ Graphic.prototype = {
 
     playFrames : function() {
 
-        if (this.interval === this.endFrame ) {
+        var self = this;
 
-            if (this.currentFrame === this.endFrame) {
-               this.currentFrame = this.startFrame;
-            } else {
-               this.currentFrame++;
+        setInterval(function() {
+
+            if (self.interval === self.endFrame ) {
+
+                if (self.currentFrame === self.endFrame) {
+                   self.currentFrame = self.startFrame;
+                } else {
+                   self.currentFrame++;
+                }
+
+                self.interval = 0;
             }
 
-            this.interval = 0;
-        }
+            self.interval++;
 
-        this.interval++;
+        }, this.frameInterval);
+        
     },
 
     drawImage : function() {
@@ -180,8 +193,12 @@ Graphic.prototype = {
             var currentFrame = 0;
             
             if (this.playSprite) {
-            
-                this.playFrames();
+                
+                if (this.playFrameLock === null) {
+                    this.playFrameLock = 1;
+                    this.playFrames();
+                }
+
                 currentFrame = this.currentFrame;
             
             // Only show certain frame
@@ -228,8 +245,13 @@ Graphic.prototype = {
 
                 // Translate to center point       
                 ctx.translate(centerX, centerY);
+
                 // Rotate
                 ctx.rotate(this.angle);
+
+                // Scale
+                ctx.scale(this.scaleX, this.scaleY);
+
                 // Translate back
                 ctx.translate(-centerX, -centerY);
 
@@ -323,7 +345,7 @@ Graphic.prototype = {
             offset : offset
         };
 
-        this.updateFn = this.updateAttached;
+        this.updateFn = this.stateManager ? 'updateAttached' : this.updateAttached;
 
     },
 

@@ -21,6 +21,19 @@ function drawFilledCircle(ctx, x, y, radius, color) {
 	ctx.closePath();
 }
 
+function drawArc(ctx, x, y, radius, startAngle, endAngle, lineWidth, color) {
+	
+    var counterClockwise = false;
+
+	ctx.beginPath();
+	ctx.arc(x, y, radius, startAngle, endAngle, counterClockwise);
+	ctx.lineWidth = 15;
+
+	// line color
+	ctx.strokeStyle = color;
+	ctx.stroke();
+}
+
 function drawLine(ctx, fromX, fromY, toX, toY, color, lineWidth) {
 	ctx.strokeStyle = color;
 	ctx.lineWidth = lineWidth;

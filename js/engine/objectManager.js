@@ -60,7 +60,7 @@ var ObjectManager = {
 
     collidedWithObject : function(object1, object2) {
         // TODO: use objects boundingbox
-        var collidedLeftTop     = false; //isWithinArea(object2.x, object2.y, object1),
+        var collidedLeftTop     = isWithinArea(object2.x, object2.y, object1),
             collidedLeftBottom  = isWithinArea(object2.x, object2.y + object2.height, object1),
             collidedRightTop    = false; //isWithinArea(object2.x + object2.width, object2.y, object1),
             collidedRightBottom = false; //isWithinArea(object2.x + object2.width, object2.y + object2.height, object1);

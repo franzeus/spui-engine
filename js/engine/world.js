@@ -28,6 +28,11 @@ var World = {
         this.width = this.$canvas.width();
         this.height = this.$canvas.height();
 
+        this.$canvas.css({
+            width : this.width,
+            height : this.height
+        });
+
         this.canvas.width = this.width;
         this.canvas.height = this.height;
 
