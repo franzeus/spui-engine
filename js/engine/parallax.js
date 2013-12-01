@@ -1,4 +1,4 @@
-var ParallaxPlain = function(options) {
+ParallaxPlain = function(options) {
 	
 	Graphic.apply(this, arguments);
 

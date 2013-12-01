@@ -1,4 +1,4 @@
-var Preloader = {
+Preloader = {
 
     currentLoad : 0,
     totalObjects : 0,
@@ -23,7 +23,6 @@ var Preloader = {
                 img.src = src;
 
                 loadedImages.push(src);
-                //console.log(src);
 
                 (function(img) {
 
@@ -47,7 +46,6 @@ var Preloader = {
     imageLoaded : function(callback) {
 
         this.currentLoad++;
-
         this.updateLoader();
 
         if (this.currentLoad === this.totalObjects) {
@@ -58,15 +56,22 @@ var Preloader = {
     },
 
     hideLoader : function() {
-        jQuery('.loadingBarWrapper').hide();        
+        jQuery('.loadingBarWrapper').hide();
     },
 
     updateLoader : function() {
 
         var loader = jQuery('.loadingBar');
-        var currentWidth = Math.round(this.currentLoad / this.totalObjects * 100);
+        var percentageLabel = jQuery('.loadingInPercent');
+        var currentPercent = Math.round(this.currentLoad / this.totalObjects * 100);
 
-        loader.css({ width : currentWidth + '%' });
+        if (loader.length) {
+            loader.css({ width : currentPercent + '%' });
+        }
+
+        if (percentageLabel.length) {
+            percentageLabel.html(currentPercent);
+        }
     }
 
 }

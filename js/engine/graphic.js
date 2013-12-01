@@ -1,6 +1,6 @@
 // ----------------------------------
 // Graphic Base Object
-var Graphic = function(_options) {
+Graphic = function(_options) {
 
     this.ctx = World.ctx;
 
@@ -36,6 +36,7 @@ var Graphic = function(_options) {
     this.gravity = GameEngine.ENV.gravity;
     this.maxAcceleration = 2;
     this.acceleration = 0.04;
+    this.opacity = 1;
 
     this.img = null;
     this.currentFrame = 0;
@@ -53,6 +54,7 @@ var Graphic = function(_options) {
         color : '#00FF00'
     }
     this.isCollidable = true;
+    this.canCollideWithSameType = false;
 
     this.debug = GameEngine.debug;
     this.isObservable = true;
@@ -257,6 +259,10 @@ Graphic.prototype = {
 
                 if (this.doClearLastPosition) {
                     //this.clearLastPosition();
+                }
+
+                if (this.opacity !== 1) {
+                    ctx.globalAlpha = this.opacity;
                 }
 
                 // Draw object
